@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "5089240e-e2b9-4dab-aefc-cd6bb341876b",
 		"name": "Booking",
+		"description": "Proyecto de reserva de los servicios REST de Booking",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "28282023"
 	},
@@ -1539,6 +1540,53 @@
 							]
 						},
 						"description": "Se valida el servicio de cancelación/eliminación de la reserva con credenciales incorrectas"
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBooking [WrongUrl]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 405 por Id nulo\", function () {\r",
+									"    pm.response.to.have.status(405);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/book/null",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"book",
+								"null"
+							]
+						},
+						"description": "Se valida el servicio de cancelación/eliminación de una reserva cuando se transmite un Id nulo"
 					},
 					"response": []
 				},
