@@ -1,0 +1,1799 @@
+{
+	"info": {
+		"_postman_id": "5089240e-e2b9-4dab-aefc-cd6bb341876b",
+		"name": "Booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28282023"
+	},
+	"item": [
+		{
+			"name": "HappyPaths",
+			"item": [
+				{
+					"name": "CreateToken",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 en la creación del token\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Token creado\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response).to.be.an('object');\r",
+									"    pm.expect(response).to.haveOwnProperty('token');\r",
+									"    pm.expect(response.token).to.be.a('string');\r",
+									"    console.log(response);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth"
+							]
+						},
+						"description": "Se valida la creación del token para la reserva"
+					},
+					"response": []
+				},
+				{
+					"name": "GetBooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Respuesta 200 obteniendo las reservas de Booking', function () {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "Se obtiene todas las reservas realizadas"
+					},
+					"response": []
+				},
+				{
+					"name": "CreateBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Generacion de un email random\r",
+									"function getRandomEmail(domain) {\r",
+									"    var domain = 'outlook.com';\r",
+									"    return Math.random().toString(36).substring(7) +'@'+ domain;\r",
+									"}\r",
+									"console.log(getRandomEmail());\r",
+									"pm.collectionVariables.set('email',getRandomEmail());\r",
+									"\r",
+									"//Generamos un valor numérico aleatorio para el precio\r",
+									"function getRandomNumber(maxValue) {\r",
+									"    return Math.floor(Math.random() * maxValue)\r",
+									"}\r",
+									"console.log(getRandomNumber(900))\r",
+									"pm.collectionVariables.set('randomQuantity',getRandomNumber(900));\r",
+									"\r",
+									"var nombres = [\"Hachiko\",\"Link\",\"Zelda\",\"Ganon\",\"Teba\"]; \r",
+									"var apellidos = [\"Fox\",\"DiCaprio\",\"Wolf\",\"Tico\",\"Ann\"];\r",
+									"var pagos = [true, false];\r",
+									"var necesidades = [\"No Dinner\",\"Nothing\",\"No Lunch\", \"Wake up at 9\",\"Don´t bother after 5\"];\r",
+									"\r",
+									"var nombre = _.sample(nombres);\r",
+									"var apellido = _.sample(apellidos);\r",
+									"var pago = _.sample(pagos);\r",
+									"var necesidad = _.sample(necesidades);\r",
+									"\r",
+									"console.log(\"Nombre seleccionado: \" + nombre);\r",
+									"console.log(\"Apellido seleccionado: \" + apellido);\r",
+									"console.log(\"Pago seleccionado: \" + pago);\r",
+									"console.log(\"Necesidad seleccionado: \" + necesidad);\r",
+									"\r",
+									"pm.collectionVariables.set(\"nombre\", nombre);\r",
+									"pm.collectionVariables.set(\"apellido\", apellido);\r",
+									"pm.collectionVariables.set(\"pago\", pago);\r",
+									"pm.collectionVariables.set(\"necesidad\", necesidad);\r",
+									"\r",
+									"const startDate = pm.collectionVariables.replaceIn('{{$randomDateRecent}}')\r",
+									"const moment = require('moment');\r",
+									"\r",
+									"let futureDate = pm.collectionVariables.replaceIn('{{$randomDateFuture}}');\r",
+									"    recentDate = pm.collectionVariables.replaceIn('{{$randomDateRecent}}');\r",
+									"\r",
+									"futureDate = moment(futureDate).format((\"YYYY-MM-DD\"));\r",
+									"recentDate = moment(recentDate).format((\"YYYY-MM-DD\"));\r",
+									"\r",
+									"pm.collectionVariables.set(\"futureDate\",futureDate);\r",
+									"pm.collectionVariables.set(\"recentDate\",recentDate);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 para la creación de la reserva\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('El Id de la reserva existe y es valido', function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response).to.be.an('object');\r",
+									"    pm.expect(response).to.haveOwnProperty('bookingid');\r",
+									"    pm.expect(response.bookingid).to.be.a('number');\r",
+									"    console.log(response.bookingid);\r",
+									"    pm.collectionVariables.set('idCreate',response.bookingid);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{nombre}}\",\r\n    \"lastname\" : \"{{apellido}}\",\r\n    \"totalprice\" : {{randomQuantity}},\r\n    \"depositpaid\" : {{pago}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{recentDate}}\",\r\n        \"checkout\" : \"{{futureDate}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{necesidad}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "Permite agregar la reserva del cliente"
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookingIds",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 para la obtención de la reserva\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Los datos del cliente estan correctos\", function () {\r",
+									"    pm.expect(response.firstname).to.be.a('string');\r",
+									"    pm.expect(response.lastname).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Precio en valor numerico\", function () {\r",
+									"    pm.expect(response.totalprice).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"if(response.depositpaid == false) {\r",
+									"    pm.test(\"Resarva pendiente de paga\");\r",
+									"} else {\r",
+									"    pm.test(\"Reserva pagada\");\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Cuenta con necesidades\", function () {\r",
+									"    pm.expect(response.additionalneeds).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"console.log(response);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idCreate"
+							],
+							"variable": [
+								{
+									"key": "idCreate",
+									"value": "{{idCreate}}"
+								}
+							]
+						},
+						"description": "Se obtiene la reserva del cliente por el Id registrado"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let token = 'YWRtaW46cGFzc3dvcmQxMjM=';\r",
+									"let tokenBook = 'Basic '+token;\r",
+									"console.log(\"Token generado:\",tokenBook);\r",
+									"pm.collectionVariables.set(\"BookAuth\", tokenBook);\r",
+									"\r",
+									"var nombresupdate = [\"Elfer\", \"Karla\", \"Fiorella\", \"Jessica\", \"Sofia\"];\r",
+									"var apeupdate = [\"Soregui\", \"Casanova\", \"Mendez\", \"Tica\", \"Del Campo\"];\r",
+									"var pagoupdate = [true, false];\r",
+									"var addupdate = [\"Lunch\", \"Breakfast\", \"Clean room at 6\", \"Don´t bother after 7\", \"Dinner\"];\r",
+									"pm.collectionVariables.set(\"nombre3\", nombresupdate[Math.floor(Math.random() * nombresupdate.length)]);\r",
+									"pm.collectionVariables.set(\"apellido3\", apeupdate[Math.floor(Math.random() * apeupdate.length)]);\r",
+									"pm.collectionVariables.set(\"add3\", addupdate[Math.floor(Math.random() * addupdate.length)]);\r",
+									"pm.collectionVariables.set(\"pago3\", pagoupdate[Math.floor(Math.random() * pagoupdate.length)]);\r",
+									"\r",
+									"const startDate = pm.collectionVariables.replaceIn('{{$randomDateRecent}}')\r",
+									"const moment = require('moment');\r",
+									"\r",
+									"let futureDateUpdate = pm.collectionVariables.replaceIn('{{$randomDateFuture}}');\r",
+									"    recentDateUpdate = pm.collectionVariables.replaceIn('{{$randomDateRecent}}');\r",
+									"\r",
+									"futureDateUpdate = moment(futureDateUpdate).format((\"YYYY-MM-DD\"));\r",
+									"recentDateUpdate = moment(recentDateUpdate).format((\"YYYY-MM-DD\"));\r",
+									"\r",
+									"pm.collectionVariables.set(\"futureDateUpdate\",futureDateUpdate);\r",
+									"pm.collectionVariables.set(\"recentDateUpdate\",recentDateUpdate);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 para la actualización completa de la reserva\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Los datos del cliente actualizados correctamente\", function () {\r",
+									"    pm.expect(response.firstname).to.be.a('string');\r",
+									"    pm.expect(response.lastname).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El precio fue actualizado a un valor numérico\", function () {\r",
+									"    pm.expect(response.totalprice).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"if(response.depositpaid == false) {\r",
+									"    pm.test(\"La reserva fue actualizada a pendiente de pago/reembolso\");\r",
+									"} else {\r",
+									"    pm.test(\"La reserva fue actualizada a pagada\");\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Se actualizaron las necesidades del cliente\", function () {\r",
+									"    pm.expect(response.additionalneeds).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"console.log(response);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{nombre3}}\",\r\n    \"lastname\" : \"{{apellido3}}\",\r\n    \"totalprice\" : {{randomQuantity}},\r\n    \"depositpaid\" : {{pago3}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{recentDateUpdate}}\",\r\n        \"checkout\" : \"{{futureDateUpdate}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{add3}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idCreate"
+							],
+							"variable": [
+								{
+									"key": "idCreate",
+									"value": "{{idCreate}}"
+								}
+							]
+						},
+						"description": "Actualiza la reserva realizada por el cliente"
+					},
+					"response": []
+				},
+				{
+					"name": "PartialUpdateBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var nombres2 = [\"Luchito\",\"Roberto\",\"Carlos\",\"Stefi\",\"Anita\"]; \r",
+									"var apellidos2 = [\"Garcia\",\"Costa\",\"Gutierrez\",\"Ramirez\",\"Arenas\"];\r",
+									"\r",
+									"var nombre2 = _.sample(nombres2);\r",
+									"var apellido2 = _.sample(apellidos2);\r",
+									"\r",
+									"console.log(\"Nombre actualizado: \" + nombre2);\r",
+									"console.log(\"Apellido actualizado: \" + apellido2);\r",
+									"\r",
+									"pm.collectionVariables.set(\"nombre2\", nombre2);\r",
+									"pm.collectionVariables.set(\"apellido2\", apellido2);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 para la actualización parcial de la reserva\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Los datos del cliente se actualizaron correctamente\", function () {\r",
+									"    pm.expect(response.firstname).to.be.a('string');\r",
+									"    pm.expect(response.lastname).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"console.log(response);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{nombre2}}\",\r\n    \"lastname\" : \"{{apellido2}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idCreate"
+							],
+							"variable": [
+								{
+									"key": "idCreate",
+									"value": "{{idCreate}}"
+								}
+							]
+						},
+						"description": "Realiza cambios puntuales a algunos datos registrados en la reserva inicial"
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 201 para la anulación de la reserva\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idCreate"
+							],
+							"variable": [
+								{
+									"key": "idCreate",
+									"value": "{{idCreate}}"
+								}
+							]
+						},
+						"description": "Permite la cancelacion \\[eliminación\\] de la reserva"
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookingIds [Random]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Generamos un valor numérico aleatorio para el Id\r",
+									"function getRandomValue(maxValue) {\r",
+									"    return Math.floor(Math.random() * maxValue)\r",
+									"}\r",
+									"pm.collectionVariables.set('idRandom',getRandomValue(99));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 para la obtención random de la reserva\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Los datos del cliente estan correctos\", function () {\r",
+									"    pm.expect(response.firstname).to.be.a('string');\r",
+									"    pm.expect(response.lastname).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Precio en valor numerico\", function () {\r",
+									"    pm.expect(response.totalprice).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"if(response.depositpaid == false) {\r",
+									"    pm.test(\"Resarva pendiente de paga\");\r",
+									"} else {\r",
+									"    pm.test(\"Reserva pagada\");\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Cuenta con necesidades\", function () {\r",
+									"    pm.expect(response.additionalneeds).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"console.log(response);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idRandom",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idRandom"
+							],
+							"variable": [
+								{
+									"key": "idRandom",
+									"value": "{{idRandom}}"
+								}
+							]
+						},
+						"description": "Se obtiene la reserva del cliente por el Id random"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBooking [Random]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Generamos un valor numérico aleatorio para el Id\r",
+									"function getRandomVar(maxValue) {\r",
+									"    return Math.floor(Math.random() * maxValue)\r",
+									"}\r",
+									"console.log(getRandomVar(99))\r",
+									"pm.collectionVariables.set('idVar',getRandomVar(99));\r",
+									"\r",
+									"var nombresupdate2 = [\"Jorge\", \"Richavo\", \"Casimiro\", \"Julian\", \"Ticaralda\"];\r",
+									"var apeupdate2 = [\"Carioca\", \"Perez\", \"Rintintin\", \"Casanova\", \"Negra\"];\r",
+									"var pagoupdate2 = [true, false];\r",
+									"var addupdate2 = [\"Facilities\", \"Sing\", \"Play violin\", \"No needs\", \"Pool\"];\r",
+									"pm.collectionVariables.set(\"nombre4\", nombresupdate2[Math.floor(Math.random() * nombresupdate2.length)]);\r",
+									"pm.collectionVariables.set(\"apellido4\", apeupdate2[Math.floor(Math.random() * apeupdate2.length)]);\r",
+									"pm.collectionVariables.set(\"add4\", addupdate2[Math.floor(Math.random() * addupdate2.length)]);\r",
+									"pm.collectionVariables.set(\"pago4\", pagoupdate2[Math.floor(Math.random() * pagoupdate2.length)]);\r",
+									"\r",
+									"const startDate2 = pm.collectionVariables.replaceIn('{{$randomDateRecent}}')\r",
+									"const moment = require('moment');\r",
+									"\r",
+									"let DaysfutureDate = pm.collectionVariables.replaceIn('{{$randomDateFuture}}');\r",
+									"    DaysrecentDate = pm.collectionVariables.replaceIn('{{$randomDateRecent}}');\r",
+									"\r",
+									"DaysfutureDate = moment(DaysfutureDate).format((\"YYYY-MM-DD\"));\r",
+									"DaysrecentDate = moment(DaysrecentDate).format((\"YYYY-MM-DD\"));\r",
+									"\r",
+									"pm.collectionVariables.set(\"DaysfutureDate\",DaysfutureDate);\r",
+									"pm.collectionVariables.set(\"DaysrecentDate\",DaysrecentDate);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 para la actualización completa de la reserva\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Los datos del cliente actualizados correctamente\", function () {\r",
+									"    pm.expect(response.firstname).to.be.a('string');\r",
+									"    pm.expect(response.lastname).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El precio fue actualizado a un valor numérico\", function () {\r",
+									"    pm.expect(response.totalprice).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"if(response.depositpaid == false) {\r",
+									"    pm.test(\"La reserva fue actualizada a pendiente de pago/reembolso\");\r",
+									"} else {\r",
+									"    pm.test(\"La reserva fue actualizada a pagada\");\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Se actualizaron las necesidades del cliente\", function () {\r",
+									"    pm.expect(response.additionalneeds).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"console.log(response);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{nombre4}}\",\r\n    \"lastname\" : \"{{apellido4}}\",\r\n    \"totalprice\" : {{randomQuantity}},\r\n    \"depositpaid\" : {{pago4}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{DaysrecentDate}}\",\r\n        \"checkout\" : \"{{DaysfutureDate}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{add4}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idVar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idVar"
+							],
+							"variable": [
+								{
+									"key": "idVar",
+									"value": "{{idVar}}"
+								}
+							]
+						},
+						"description": "Actualiza la reserva realizada por el cliente con un Id random"
+					},
+					"response": []
+				},
+				{
+					"name": "PartialUpdateBooking [Random]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Generamos un valor numérico aleatorio para el Id\r",
+									"function getRandomVarUp(maxValue) {\r",
+									"    return Math.floor(Math.random() * maxValue)\r",
+									"}\r",
+									"pm.collectionVariables.set('idUp',getRandomVarUp(99));\r",
+									"\r",
+									"const startDate3 = pm.collectionVariables.replaceIn('{{$randomDateRecent}}')\r",
+									"const moment = require('moment');\r",
+									"\r",
+									"let DaysfutureDateUp = pm.collectionVariables.replaceIn('{{$randomDateFuture}}');\r",
+									"    DaysrecentDateUp = pm.collectionVariables.replaceIn('{{$randomDateRecent}}');\r",
+									"\r",
+									"DaysfutureDateUp = moment(DaysfutureDateUp).format((\"YYYY-MM-DD\"));\r",
+									"DaysrecentDateUp = moment(DaysrecentDateUp).format((\"YYYY-MM-DD\"));\r",
+									"\r",
+									"pm.collectionVariables.set(\"DaysfutureDateUp\",DaysfutureDateUp);\r",
+									"pm.collectionVariables.set(\"DaysrecentDateUp\",DaysrecentDateUp);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200 para la actualización parcial de la reserva\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Los datos del cliente se actualizaron correctamente\", function () {\r",
+									"    pm.expect(response.firstname).to.be.a('string');\r",
+									"    pm.expect(response.lastname).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"console.log(response);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{DaysrecentDateUp}}\",\r\n        \"checkout\" : \"{{DaysfutureDateUp}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idUp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idUp"
+							],
+							"variable": [
+								{
+									"key": "idUp",
+									"value": "{{idUp}}"
+								}
+							]
+						},
+						"description": "Realiza cambios puntuales a algunos datos registrados en la reserva inicial"
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBooking [Random]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 201 para la anulación de la reserva\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Generamos un valor numérico aleatorio para el Id\r",
+									"function getRandomVarDel(maxValue) {\r",
+									"    return Math.floor(Math.random() * maxValue)\r",
+									"}\r",
+									"pm.collectionVariables.set('idDel',getRandomVarDel(99));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/booking/:idDel",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								":idDel"
+							],
+							"variable": [
+								{
+									"key": "idDel",
+									"value": "{{idDel}}"
+								}
+							]
+						},
+						"description": "Permite la cancelacion \\[eliminación\\] de la reserva con Id random"
+					},
+					"response": []
+				},
+				{
+					"name": "HealthCheck",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 201 con estado OK\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ping"
+							]
+						},
+						"description": "Se valida el estado/salud del servicio"
+					},
+					"response": []
+				},
+				{
+					"name": "GetCollections",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 200, se obtiene la colección\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.postman.com/collections/28282023-5089240e-e2b9-4dab-aefc-cd6bb341876b?apikey=PMAK-65e86a8bac6125000164095c-1002b71e4a85ceb109ce5b164b11b507df",
+							"protocol": "https",
+							"host": [
+								"api",
+								"postman",
+								"com"
+							],
+							"path": [
+								"collections",
+								"28282023-5089240e-e2b9-4dab-aefc-cd6bb341876b"
+							],
+							"query": [
+								{
+									"key": "apikey",
+									"value": "PMAK-65e86a8bac6125000164095c-1002b71e4a85ceb109ce5b164b11b507df"
+								}
+							]
+						},
+						"description": "Se obtiene las colecciones correspondientes al servicio Booking"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UnhappyPaths",
+			"item": [
+				{
+					"name": "CreateToken [BadCredentials]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Mensaje de error por credenciales incorrectas\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.reason).to.eql('Bad credentials')\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth"
+							]
+						},
+						"description": "Se valida la respuesta del servicio con credenciales incorrectas"
+					},
+					"response": []
+				},
+				{
+					"name": "CreateToken [WrongUrl]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 404: Error de Url\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auths",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auths"
+							]
+						},
+						"description": "Se valida la respuesta del servicio ante un Url incorrecto"
+					},
+					"response": []
+				},
+				{
+					"name": "GetBooking [WrongUrl]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 404 por Error de Url\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookings"
+							]
+						},
+						"description": "Se valida la respuesta del servicio de reservas cuando el Url de consulta es incorrecto"
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookingIds [IdNull]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 404 por Id nulo\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/booking/null",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"null"
+							]
+						},
+						"description": "Se valida la respuesta del servicio cuando el Id de la reserva es nula"
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookingIds [IdString]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 404 por Id de letras\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/booking/ac",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"ac"
+							]
+						},
+						"description": "Se valida la respuesta del servicio cuando el Id de la reserva es con letras"
+					},
+					"response": []
+				},
+				{
+					"name": "CreateBooking [NumericName]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 500 por campo string como numérico\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : 123,\r\n    \"lastname\" : \"Brown\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : false,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "Se valida la respuesta del servicio de creación de reservas cuando el campo es de valor numérico"
+					},
+					"response": []
+				},
+				{
+					"name": "CreateBooking [MissingVar]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 400 por falta de una variable\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n//    \"firstname\" : \"\",\r\n    \"lastname\" : \"Brown\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : false,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "Se valida la creación de una reserva cuando no se envía un campo en el body"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBooking [FakeAuth]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 403 por error de autenticación\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{FakeAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Ticaraldo\",\r\n    \"lastname\" : \"Negro\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"1"
+							]
+						},
+						"description": "Se valida la actualización de la reserva cuando las credenciales son incorrectas"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBooking [IdNull]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 405 por Id nulo\", function () {\r",
+									"    pm.response.to.have.status(405);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Ticaraldo\",\r\n    \"lastname\" : \"Negro\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/null",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"null"
+							]
+						},
+						"description": "Se valida cuando se envía en la reserva un Id de tipo nulo"
+					},
+					"response": []
+				},
+				{
+					"name": "PartialUpdateBooking [FakeAuth]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 403 por error de autenticación\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{FakeAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Ticaraldo\",\r\n    \"lastname\" : \"Negro\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/625",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"625"
+							]
+						},
+						"description": "Se valida la respuesta del servicio de actualización de la reserva parcial con credenciales incorrectas"
+					},
+					"response": []
+				},
+				{
+					"name": "PartialUpdateBooking [IdNull]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 405 por Id nulo\", function () {\r",
+									"    pm.response.to.have.status(405);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Ticaraldo\",\r\n    \"lastname\" : \"Negro\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/null",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"null"
+							]
+						},
+						"description": "Se valida la respuesta del servicio de actualización de la reserva parcial con Id nulo"
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBooking [FakeAuth]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 403 por error de autenticación\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{FakeAuth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/booking/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"1"
+							]
+						},
+						"description": "Se valida el servicio de cancelación/eliminación de la reserva con credenciales incorrectas"
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBooking [IdNull]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 405 por Id nulo\", function () {\r",
+									"    pm.response.to.have.status(405);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{BookAuth}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/booking/null",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"null"
+							]
+						},
+						"description": "Se valida el servicio de cancelación/eliminación de una reserva cuando se transmite un Id nulo"
+					},
+					"response": []
+				},
+				{
+					"name": "HealthCheck [WrongUrl]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta 404 por Url incorrecto\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pings"
+							]
+						},
+						"description": "Validamos el estado del servicio cuando el Url es incorrecto"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://restful-booker.herokuapp.com",
+			"type": "string"
+		},
+		{
+			"key": "BookAuth",
+			"value": ""
+		},
+		{
+			"key": "FakeAuth",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "randomQuantity",
+			"value": ""
+		},
+		{
+			"key": "idCreate",
+			"value": ""
+		},
+		{
+			"key": "nombre",
+			"value": ""
+		},
+		{
+			"key": "nombres",
+			"value": ""
+		},
+		{
+			"key": "apellido",
+			"value": ""
+		},
+		{
+			"key": "apellidos",
+			"value": ""
+		},
+		{
+			"key": "pago",
+			"value": ""
+		},
+		{
+			"key": "nombre2",
+			"value": ""
+		},
+		{
+			"key": "apellido2",
+			"value": ""
+		},
+		{
+			"key": "nombre3",
+			"value": ""
+		},
+		{
+			"key": "apellido3",
+			"value": ""
+		},
+		{
+			"key": "add3",
+			"value": ""
+		},
+		{
+			"key": "pago3",
+			"value": ""
+		},
+		{
+			"key": "futureDate",
+			"value": ""
+		},
+		{
+			"key": "recentDate",
+			"value": ""
+		},
+		{
+			"key": "futureDateUpdate",
+			"value": ""
+		},
+		{
+			"key": "recentDateUpdate",
+			"value": ""
+		},
+		{
+			"key": "necesidad",
+			"value": ""
+		},
+		{
+			"key": "randomQuantityVar",
+			"value": ""
+		},
+		{
+			"key": "idRandom",
+			"value": ""
+		},
+		{
+			"key": "idVar",
+			"value": ""
+		},
+		{
+			"key": "nombre4",
+			"value": ""
+		},
+		{
+			"key": "apellido4",
+			"value": ""
+		},
+		{
+			"key": "add4",
+			"value": ""
+		},
+		{
+			"key": "pago4",
+			"value": ""
+		},
+		{
+			"key": "DaysfutureDate",
+			"value": ""
+		},
+		{
+			"key": "DaysrecentDate",
+			"value": ""
+		},
+		{
+			"key": "idDel",
+			"value": ""
+		},
+		{
+			"key": "idUp",
+			"value": ""
+		},
+		{
+			"key": "DaysfutureDateUp",
+			"value": ""
+		},
+		{
+			"key": "DaysrecentDateUp",
+			"value": ""
+		}
+	]
+}
